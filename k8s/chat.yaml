@@ -1,0 +1,56 @@
+---
+# The copilot: a back-end-for-frontend that logs the rep in with auth-code+PKCE
+# and calls tools over MCP. It holds only the rep's SSO token — the exchanged,
+# narrowed token is minted inside the gateway and never reaches this pod.
+#
+# IDP_AUTHORIZE_URL is browser-facing, so it must be the pinned issuer hostname.
+# IDP_TOKEN_URL is called from inside the pod, so it uses cluster DNS.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-chat
+  namespace: acme
+  labels: { app: acme-chat }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: acme-chat }
+  template:
+    metadata:
+      labels: { app: acme-chat }
+    spec:
+      containers:
+        - name: chat
+          image: acme-chat:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - { name: IDP_AUTHORIZE_URL, value: "http://acme-keycloak:8280/realms/acme/protocol/openid-connect/auth" }
+            - { name: IDP_TOKEN_URL, value: "http://acme-keycloak.acme.svc:8280/realms/acme/protocol/openid-connect/token" }
+            - { name: CHAT_CLIENT_ID, value: acme-support-chat }
+            - { name: CHAT_REDIRECT_URI, value: "http://localhost:8095/callback" }
+            - { name: CHAT_SCOPES, value: "openid customers:all" }
+            - { name: LOGIN_PROMPT, value: login }
+            - { name: MCP_ENDPOINT, value: "http://gateway-svc-tyk-tyk-gateway.tyk.svc:8080/acme-mcp/mcp" }
+            - { name: CHAT_LISTEN, value: ":8090" }
+            # One span per tool call, with W3C context injected into the HTTP
+            # header and the MCP body's params._meta - so the gateway and the
+            # tool server join this trace instead of starting their own.
+            - { name: OTEL_EXPORTER_OTLP_ENDPOINT, value: "http://jaeger.acme.svc:4318" }
+          ports:
+            - { name: http, containerPort: 8090 }
+          readinessProbe:
+            httpGet: { path: /, port: 8090 }
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-chat
+  namespace: acme
+spec:
+  selector: { app: acme-chat }
+  ports:
+    - { name: http, port: 8095, targetPort: 8090 }

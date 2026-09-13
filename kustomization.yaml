@@ -1,0 +1,39 @@
+---
+# The whole workshop, declaratively:
+#
+#   kubectl apply -k .
+#
+# Application workloads are ordinary Kubernetes objects. The Tyk configuration
+# is a SecurityPolicy plus two API resources that the Tyk Operator reconciles
+# into the Dashboard, which then broadcasts to the Gateways. Nothing here calls
+# the Tyk API directly.
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: acme
+
+resources:
+  - k8s/namespace.yaml
+  # application
+  - k8s/keycloak.yaml
+  - k8s/httpbin.yaml
+  - k8s/observability.yaml
+  - k8s/mcp-server.yaml
+  - k8s/chat.yaml
+  # Tyk configuration, reconciled by the Operator
+  - k8s/tyk-security-policy.yaml
+  - k8s/tyk-acme-api.yaml
+  - k8s/tyk-acme-mcp-proxy.yaml
+
+# These files are data, not templates — they are mounted or read verbatim. The
+# name suffix hash is disabled so the Tyk resources can reference them by a
+# stable name.
+generatorOptions:
+  disableNameSuffixHash: true
+
+configMapGenerator:
+  - name: acme-keycloak-realm
+    files: [realm-acme.json=data/realm-acme.json]
+  - name: acme-api-oas
+    files: [acme-api.oas.json=data/acme-api.oas.json]
+  - name: acme-mcp-proxy-oas
+    files: [acme-mcp-proxy.oas.json=data/acme-mcp-proxy.oas.json]

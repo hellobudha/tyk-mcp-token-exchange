@@ -1,0 +1,61 @@
+---
+# Keycloak 26 with the acme realm imported at startup.
+#
+# KC_HOSTNAME pins the issuer to http://acme-keycloak:8280 so that every token
+# carries the same iss regardless of which network path reached Keycloak:
+#   - in-cluster, workloads use acme-keycloak.acme.svc:8280
+#   - from the browser, /etc/hosts maps acme-keycloak -> 127.0.0.1 and a
+#     port-forward on 8280 completes the auth-code flow
+# Hostname pinning affects the URLs Keycloak *issues*, not the ones it answers on.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-keycloak
+  namespace: acme
+  labels: { app: acme-keycloak }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: acme-keycloak }
+  template:
+    metadata:
+      labels: { app: acme-keycloak }
+    spec:
+      containers:
+        - name: keycloak
+          image: quay.io/keycloak/keycloak:26.3
+          args: ["start-dev", "--import-realm"]
+          env:
+            - { name: KC_BOOTSTRAP_ADMIN_USERNAME, value: admin }
+            - { name: KC_BOOTSTRAP_ADMIN_PASSWORD, value: admin }
+            - { name: KC_HOSTNAME, value: "http://acme-keycloak:8280" }
+            - { name: KC_HTTP_PORT, value: "8280" }
+            - { name: KC_HTTP_ENABLED, value: "true" }
+            - { name: KC_HEALTH_ENABLED, value: "true" }
+          ports:
+            - { name: http, containerPort: 8280 }
+          volumeMounts:
+            - name: realm
+              mountPath: /opt/keycloak/data/import
+              readOnly: true
+          readinessProbe:
+            httpGet: { path: /realms/acme/.well-known/openid-configuration, port: 8280 }
+            initialDelaySeconds: 15
+            periodSeconds: 5
+            failureThreshold: 40
+          resources:
+            requests: { cpu: 200m, memory: 512Mi }
+            limits: { memory: 1Gi }
+      volumes:
+        - name: realm
+          configMap: { name: acme-keycloak-realm }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-keycloak
+  namespace: acme
+spec:
+  selector: { app: acme-keycloak }
+  ports:
+    - { name: http, port: 8280, targetPort: 8280 }

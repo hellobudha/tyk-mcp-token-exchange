@@ -1,0 +1,19 @@
+---
+# The MCP proxy — the doer. Validates the rep's JWT, runs the per-tool check
+# against their `entitlements` claim, performs the RFC 8693 exchange against
+# Keycloak, then proxies to the MCP server with the narrowed token.
+#
+# The whole configuration — auth, per-tool security, the token exchange provider
+# — is the MCP OAS document in the ConfigMap. The operator owns its lifecycle in
+# the Dashboard; edit the ConfigMap and the operator reconciles the change.
+apiVersion: tyk.tyk.io/v1alpha1
+kind: TykMcpProxyDefinition
+metadata:
+  name: acme-mcp-proxy
+  namespace: acme
+spec:
+  tykMCP:
+    configmapRef:
+      name: acme-mcp-proxy-oas
+      namespace: acme
+      keyName: acme-mcp-proxy.oas.json

@@ -1,0 +1,28 @@
+---
+# JWT auth on both APIs needs a default policy, otherwise every call is rejected
+# with "403 Access disallowed". The operator resolves the API references below
+# into Tyk API ids, so nothing here hardcodes an id.
+#
+# The explicit `id` matters: TykMcpProxyDefinition has no jwtAuth.defaultPoliciesRef
+# field (TykOasApiDefinition does), so the MCP proxy's OAS document binds to this
+# policy by name. The gateway runs with allow_explicit_policy_id, which makes the
+# `id` field — not the Dashboard-generated `_id` — the lookup key.
+apiVersion: tyk.tyk.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: acme-demo-default
+  namespace: acme
+spec:
+  id: acme-demo-default
+  name: Acme Demo Default
+  state: active
+  active: true
+  access_rights_array:
+    - name: acme-api
+      namespace: acme
+      kind: TykOasApiDefinition
+      versions: ["Default"]
+    - name: acme-mcp-proxy
+      namespace: acme
+      kind: TykMcpProxyDefinition
+      versions: ["Default"]

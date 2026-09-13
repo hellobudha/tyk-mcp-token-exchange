@@ -1,0 +1,357 @@
+{
+  "realm": "acme",
+  "enabled": true,
+  "displayName": "Acme Support Copilot demo",
+  "sslRequired": "none",
+  "accessTokenLifespan": 300,
+  "registrationAllowed": false,
+  "components": {
+    "org.keycloak.userprofile.UserProfileProvider": [
+      {
+        "providerId": "declarative-user-profile",
+        "config": {
+          "kc.user.profile.config": [
+            "{\"attributes\": [{\"name\": \"username\", \"displayName\": \"${username}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}}, {\"name\": \"email\", \"displayName\": \"${email}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}}, {\"name\": \"firstName\", \"displayName\": \"${firstName}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}}, {\"name\": \"lastName\", \"displayName\": \"${lastName}\", \"permissions\": {\"view\": [\"admin\", \"user\"], \"edit\": [\"admin\", \"user\"]}}], \"groups\": [], \"unmanagedAttributePolicy\": \"ENABLED\"}"
+          ]
+        }
+      }
+    ],
+    "org.keycloak.keys.KeyProvider": [
+      {
+        "name": "acme-static-rsa",
+        "providerId": "rsa",
+        "subComponents": {},
+        "config": {
+          "priority": [
+            "200"
+          ],
+          "enabled": [
+            "true"
+          ],
+          "active": [
+            "true"
+          ],
+          "algorithm": [
+            "RS256"
+          ],
+          "privateKey": [
+            "MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCVRjqxmnAT/Yhban1dtSbMbOMxsPe8fZ6INC8+hy+ASLI3hQLmPKPZ8XLIk+BoMlN3nLQr23STKSjMUtR6UKhzdXSm6t+LL3xg39Vm9GXliK/2mWQNr8qLagADG2e+ZHjzHq8wXmxKRnBStgeVqumpD+O5WkRHRIYyGLBpODwnrWy3BQOJ9AtBPgDt2OSC32E1knScC4myOv/+ygjXNjrc5B0TI1tw3CyUPC5H8IAgoYq3jX0TFS03FGhgC40VBd/wvjgUA8eNfj38rv4pgtTbZWBiakqxQaeZlTrpArEthPh6IdQCEK5wzwOac6zQzFc1XaPh0g7E+hwpjC6bEc8JAgMBAAECggEAJPDo1Iv2IZRUGt9rH/YVIHDv9puna0+hHG7hpDU7RaF37TJvCcBHAkf00nt6BP8zVb4DfnkES+jbLllvOMfeMBiIokgswxqgyq6J9r0TvG6LsVi7gIGY+9BjKWGuVlkx72SQEUXEwcrVwDpI/Tp7Mbn7bqLOk9564Unn2lou1Nh+9Hk/Q+y9DQg6T+kR3NMWsl6bgQ24Hf9duNP2GQZBG0n0PIS7iCF5jI1DJAMAkuBvOF7JYlRV2Hq8V7LCVkumCgsyz9PpQKc4VMHTyeGNP8Jkgv2+EDPSqu0jzuVpJyzAWA3QLD1BMJ1K7TiZWVurQTsO+AxFxVqf5+ymg90DKQKBgQDFzu5Q9jk4HZ465lpQm6oaQNftkA/jVHI/9vgpz1f8DYjMuuI6+nkg22Za/1t504W2D3M6+sJQVyzUS3zxpi6HxEnsQxjq6Cm5yo+uZeFfKowtqg/qrLqHSeplOpHBmOXKnttRgKVmSDx5sWMkbpQ6QuXhN6E7EqX3Zep6EXbGbQKBgQDBMCxLeGosrha4PUgkClxf+Zfj+6qP/xHkStBheT4D8PPy8tkFDAoCw5BSyTMMmeJVlkoq+A6Lgj0JyTNVQyp1xDXGuKMu9/RJajW3hRpn7gTQbKGL2BSkyT39Rq/B1fyXVtNf3aIIBT09Ko3H/N3zV0cySGb8eUUClxA6ljF5jQKBgC05yrMoGJ0D6JF+6VdUv+eQu83NClTnkdeeF883YN54Gbb1Y5QogFlK0HQtvjR0cDXYAniRrKvBwrYnLEHzxN+1uVETZjcPLbsU3RT6pjSj/bjTESCOrXcRJ05NvdWNp7xT5cEUsLxZ97m7HPfPcISBlx2PIoXnFZsi6iFOrOFhAoGASZIM7FjZJlbN9C/yTzda4nns7DelRt0+dRBAtz4y7dFPNdBh8VgaX98WEVDqDfx0g1+OszpwX5SjphxnXisL+nlUeW9LRdHLyEGYX2FjIv0z/CPCib0qb27sGo5W1JynawL30GRZFnDYV3jjMawM4mT0iiOkhLWyIEBjP8x+3ukCgYBRBh+XeLk7NsUTa9MxxoIQGmjFTbjryEM5Cn6ryt6iJsE4nXvgDt+1I3ioOAE5os3lkUqgMp5rd+TTYSO87s/znLGUgyL7F0ABMU+R2HBR51uqwboHlHxbiA0eklYg9czVDD6lo8pOQOxN6z37XchG5mSFW3rfxZoMtZFd1CGhQQ=="
+          ],
+          "certificate": [
+            "MIIDCzCCAfOgAwIBAgIUI/UFQvxpmE2fDOuwcOUFEXCEa9YwDQYJKoZIhvcNAQELBQAwFTETMBEGA1UEAwwKYWNtZS1yZWFsbTAeFw0yNjA5MTIxNzM3MTRaFw0zNjA5MDkxNzM3MTRaMBUxEzARBgNVBAMMCmFjbWUtcmVhbG0wggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCVRjqxmnAT/Yhban1dtSbMbOMxsPe8fZ6INC8+hy+ASLI3hQLmPKPZ8XLIk+BoMlN3nLQr23STKSjMUtR6UKhzdXSm6t+LL3xg39Vm9GXliK/2mWQNr8qLagADG2e+ZHjzHq8wXmxKRnBStgeVqumpD+O5WkRHRIYyGLBpODwnrWy3BQOJ9AtBPgDt2OSC32E1knScC4myOv/+ygjXNjrc5B0TI1tw3CyUPC5H8IAgoYq3jX0TFS03FGhgC40VBd/wvjgUA8eNfj38rv4pgtTbZWBiakqxQaeZlTrpArEthPh6IdQCEK5wzwOac6zQzFc1XaPh0g7E+hwpjC6bEc8JAgMBAAGjUzBRMB0GA1UdDgQWBBS7K9oP+/qvRHl8tWrTl6TXCC1FLjAfBgNVHSMEGDAWgBS7K9oP+/qvRHl8tWrTl6TXCC1FLjAPBgNVHRMBAf8EBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQATgHFLjCJEOQQCtMwdkQGW6Am+Iae7XirBiw6GP/IoNCrOc+kAALVaSwYI/ciaOhcqT/4AQn0se+cXsvzhBrn64ApkPwlx/YcxywK7tR/shDKIe1B8KVUtYYpSEJL71ZkmeXnDAatdnd3GRWL3pmOv4LR9jAx9FrxOVBeQYMgz2nMQ7/NuoVwSOVBiYoApQi6ggdVpQPXYswMmObTkeJx69Oqu6X9SJh58MuUK1BD9ySYM6Q5DmBcyh1cMHKaPb3SAsxsRb8T0vykojbDfN7YV40KxTa219FosqaSST2Ln9gZhxIaY0jOzKTXv2ZDT/8aJ2vRsBrRkjugpss3ck1Hh"
+          ]
+        }
+      }
+    ]
+  },
+  "clientScopes": [
+    {
+      "name": "customers:read",
+      "description": "Read Acme customer accounts and orders",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "customers:write",
+      "description": "Update Acme customer records",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "customers:all",
+      "description": "Broad customer access the chat logs in with (narrowed by the exchange)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "refunds:write",
+      "description": "Issue refunds",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      }
+    },
+    {
+      "name": "entitlements",
+      "description": "Maps the per-user entitlements attribute into the access token (the claim Tyk's per-tool scope check reads)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "entitlements",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "entitlements",
+            "claim.name": "entitlements",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "userinfo.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "acme-identity",
+      "description": "sub + preferred_username + name \u2014 declaring clientScopes in an import suppresses Keycloak's built-in basic/profile scopes, so the identity mappers are defined here explicitly",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "preferred_username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        },
+        {
+          "name": "full name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "false",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "mcp-gateway-audience",
+      "description": "Stamps aud=tyk-mcp-gateway on the chat's SSO token \u2014 Keycloak's standard token exchange only accepts a subject token whose audience includes the exchanging client",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "mcp-gateway-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "tyk-mcp-gateway",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    },
+    {
+      "name": "acme-api-audience",
+      "description": "Makes api.acme.internal an available audience for the exchange \u2014 Keycloak only honours the RFC 8693 audience parameter if the exchanging client's scopes can produce that audience",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "acme-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "api.acme.internal",
+            "access.token.claim": "true",
+            "id.token.claim": "false"
+          }
+        }
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "acme-support-chat",
+      "name": "Acme Support Copilot (chat)",
+      "description": "The browser chat / MCP client. Support reps (alice, bob) log in here via auth-code + PKCE; the resulting SSO token is the exchange's subject token.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "redirectUris": [
+        "http://localhost:8095/callback"
+      ],
+      "webOrigins": [
+        "http://localhost:8095"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:8095"
+      },
+      "defaultClientScopes": [
+        "acme-identity",
+        "entitlements",
+        "mcp-gateway-audience"
+      ],
+      "optionalClientScopes": [
+        "customers:all",
+        "customers:read",
+        "customers:write",
+        "refunds:write"
+      ]
+    },
+    {
+      "clientId": "tyk-mcp-gateway",
+      "name": "Tyk MCP proxy (token-exchange client)",
+      "description": "The confidential client Tyk authenticates the RFC 8693 exchange with. Standard token exchange is enabled on this client.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "acme-demo-exchange-secret",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "acme-identity",
+        "entitlements",
+        "acme-api-audience"
+      ],
+      "optionalClientScopes": [
+        "customers:read",
+        "customers:write",
+        "customers:all",
+        "refunds:write"
+      ]
+    },
+    {
+      "clientId": "api.acme.internal",
+      "name": "Acme resource API (exchange audience)",
+      "description": "Exists only to be the audience of the exchange \u2014 Keycloak requires the RFC 8693 audience parameter to name a client. Never requests tokens itself.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "secret": "audience-only-never-used",
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    }
+  ],
+  "groups": [
+    {
+      "name": "acme-support"
+    },
+    {
+      "name": "acme-supervisors"
+    }
+  ],
+  "users": [
+    {
+      "username": "carol",
+      "enabled": true,
+      "createdTimestamp": 1772451000000,
+      "email": "carol@acme.example",
+      "emailVerified": true,
+      "firstName": "Carol",
+      "lastName": "Acme",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Acme-Demo-2026!",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/acme-support"
+      ],
+      "attributes": {
+        "entitlements": [
+          "customers:read customers:write"
+        ]
+      }
+    },
+    {
+      "username": "alice",
+      "enabled": true,
+      "createdTimestamp": 1767604320000,
+      "email": "alice@acme.example",
+      "emailVerified": true,
+      "firstName": "Alice",
+      "lastName": "Acme",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Acme-Demo-2026!",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/acme-support"
+      ],
+      "attributes": {
+        "entitlements": [
+          "customers:read"
+        ]
+      }
+    },
+    {
+      "username": "bob",
+      "enabled": true,
+      "createdTimestamp": 1767604500000,
+      "email": "bob@acme.example",
+      "emailVerified": true,
+      "firstName": "Bob",
+      "lastName": "Acme",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "Acme-Demo-2026!",
+          "temporary": false
+        }
+      ],
+      "groups": [
+        "/acme-support",
+        "/acme-supervisors"
+      ],
+      "attributes": {
+        "entitlements": [
+          "customers:read customers:write refunds:write"
+        ]
+      }
+    }
+  ]
+}

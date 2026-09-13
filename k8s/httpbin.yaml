@@ -1,0 +1,35 @@
+---
+# The resource API's upstream. /anything echoes the request back, including the
+# Authorization header — which is how the chat's delegation inspector can show
+# the exchanged token that actually reached the API.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpbin
+  namespace: acme
+  labels: { app: httpbin }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: httpbin }
+  template:
+    metadata:
+      labels: { app: httpbin }
+    spec:
+      containers:
+        - name: httpbin
+          image: kennethreitz/httpbin:latest
+          ports:
+            - { name: http, containerPort: 80 }
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: httpbin
+  namespace: acme
+spec:
+  selector: { app: httpbin }
+  ports:
+    - { name: http, port: 80, targetPort: 80 }

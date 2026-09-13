@@ -1,0 +1,53 @@
+---
+# Generic OpenAPI -> MCP tool server: one MCP tool per operation in the acme-api
+# OAS document. Tool calls replay the inbound bearer (the token Tyk exchanged)
+# and the trace context to the acme-api, addressed through the gateway by the
+# api.acme.internal Host header. It performs no auth checks of its own — the
+# gateway is the trust boundary.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: acme-mcp-server
+  namespace: acme
+  labels: { app: acme-mcp-server }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: acme-mcp-server }
+  template:
+    metadata:
+      labels: { app: acme-mcp-server }
+    spec:
+      containers:
+        - name: mcp-server
+          image: acme-mcp-server:1.0.0
+          imagePullPolicy: IfNotPresent
+          env:
+            - { name: MCP_OAS_PATH, value: /etc/acme/acme-api.oas.json }
+            - { name: UPSTREAM_BASE_URL, value: "http://gateway-svc-tyk-tyk-gateway.tyk.svc:8080" }
+            - { name: UPSTREAM_HOST, value: api.acme.internal }
+          ports:
+            - { name: http, containerPort: 7878 }
+          volumeMounts:
+            - name: oas
+              mountPath: /etc/acme
+              readOnly: true
+          readinessProbe:
+            httpGet: { path: /health, port: 7878 }
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+      volumes:
+        - name: oas
+          configMap: { name: acme-api-oas }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: acme-mcp-server
+  namespace: acme
+spec:
+  selector: { app: acme-mcp-server }
+  ports:
+    - { name: http, port: 7878, targetPort: 7878 }

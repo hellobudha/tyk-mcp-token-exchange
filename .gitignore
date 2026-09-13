@@ -1,0 +1,5 @@
+.env
+services/chat/acme-chat
+services/chat/acme-support-chat
+services/mcp-server/acme-mcp-server
+*.bak

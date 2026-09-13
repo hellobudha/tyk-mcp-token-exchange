@@ -1,0 +1,23 @@
+---
+# The resource API — the guard. Validates the exchanged token and enforces the
+# narrowed scope per operation. It never exchanges anything.
+#
+# The OAS document (including the x-tyk-api-gateway extension) lives in a
+# ConfigMap; the operator pushes it to the Dashboard and keeps it in sync.
+#
+# Everything — custom domain, JWT auth, per-operation scope checks — is declared
+# in that document rather than in CR-level override fields. The CR stays a thin
+# pointer, the document is the single source of truth, and both APIs are
+# configured the same way. See README "Operator override fields" for why the
+# spec.customDomain and spec.jwtAuth shortcuts are not used here.
+apiVersion: tyk.tyk.io/v1alpha1
+kind: TykOasApiDefinition
+metadata:
+  name: acme-api
+  namespace: acme
+spec:
+  tykOAS:
+    configmapRef:
+      name: acme-api-oas
+      namespace: acme
+      keyName: acme-api.oas.json
