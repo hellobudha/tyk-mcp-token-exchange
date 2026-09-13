@@ -87,26 +87,20 @@ kubectl create secret generic tyk-conf -n "$TYK_NS" \
 info "tyk-conf secret written"
 
 # ----------------------------------------------------------- tyk install ----
-log "Installing the Tyk stack (chart $CHART_VERSION, images $TYK_VERSION)"
+log "Tyk Helm repository"
 helm repo add tyk-helm https://helm.tyk.io/public/helm/charts/ >/dev/null 2>&1 || true
 helm repo update tyk-helm >/dev/null 2>&1 || helm repo update >/dev/null
 
-helm upgrade --install tyk-redis oci://registry-1.docker.io/bitnamicharts/redis \
-  -n "$TYK_NS" --version 19.0.2 \
-  --set image.tag=6.2.13 --set architecture=standalone --set auth.enabled=false \
-  --wait --timeout 10m >/dev/null
-info "redis ready"
-
-helm upgrade --install tyk-postgres oci://registry-1.docker.io/bitnamicharts/postgresql \
-  -n "$TYK_NS" --version 12.12.10 \
-  --set auth.database=tyk_analytics --set auth.postgresPassword=workshop \
-  --wait --timeout 10m >/dev/null
-info "postgres ready"
+log "Redis and PostgreSQL"
+kubectl apply -f platform/datastores.yaml >/dev/null
+kubectl rollout status deploy/tyk-redis    -n "$TYK_NS" --timeout=300s | sed 's/^/   /'
+kubectl rollout status deploy/tyk-postgres -n "$TYK_NS" --timeout=300s | sed 's/^/   /'
 
 kubectl create secret generic tyk-db -n "$TYK_NS" \
-  --from-literal=connectionString="host=tyk-postgres-postgresql port=5432 user=postgres password=workshop database=tyk_analytics sslmode=disable" \
+  --from-literal=connectionString="host=tyk-postgres port=5432 user=postgres password=workshop database=tyk_analytics sslmode=disable" \
   --dry-run=client -o yaml | kubectl apply -f - >/dev/null
 
+log "Installing the Tyk stack (chart $CHART_VERSION, images $TYK_VERSION)"
 # The workshop needs the Dashboard, one Gateway, the Pump (for analytics) and
 # the Operator. The developer portal is not used, so it stays off.
 helm upgrade --install tyk tyk-helm/tyk-stack -n "$TYK_NS" --version "$CHART_VERSION" \
@@ -117,7 +111,7 @@ helm upgrade --install tyk tyk-helm/tyk-stack -n "$TYK_NS" --version "$CHART_VER
   --set global.storageType=postgres \
   --set global.postgres.connectionStringSecret.name=tyk-db \
   --set global.postgres.connectionStringSecret.keyName=connectionString \
-  --set global.redis.addrs[0]=tyk-redis-master:6379 \
+  --set global.redis.addrs[0]=tyk-redis:6379 \
   --set global.redis.pass="" \
   --set global.components.devPortal=false \
   --set global.components.pump=true \

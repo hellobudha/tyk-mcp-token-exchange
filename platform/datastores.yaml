@@ -1,0 +1,87 @@
+---
+# Redis and PostgreSQL for the Tyk control plane.
+#
+# Deliberately plain manifests on official images rather than Helm charts: the
+# workshop needs one small instance of each, and upstream community charts have
+# a habit of moving or withdrawing their images. Storage is ephemeral — this is
+# a workshop cluster, and a restart is meant to be cheap.
+apiVersion: v1
+kind: Service
+metadata:
+  name: tyk-redis
+  namespace: tyk
+spec:
+  selector: { app: tyk-redis }
+  ports: [{ name: redis, port: 6379, targetPort: 6379 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tyk-redis
+  namespace: tyk
+  labels: { app: tyk-redis }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: tyk-redis }
+  template:
+    metadata:
+      labels: { app: tyk-redis }
+    spec:
+      containers:
+        - name: redis
+          image: redis:7.2-alpine
+          args: ["--save", "", "--appendonly", "no"]
+          ports: [{ name: redis, containerPort: 6379 }]
+          readinessProbe:
+            exec: { command: ["redis-cli", "ping"] }
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { memory: 256Mi }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tyk-postgres
+  namespace: tyk
+spec:
+  selector: { app: tyk-postgres }
+  ports: [{ name: postgres, port: 5432, targetPort: 5432 }]
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tyk-postgres
+  namespace: tyk
+  labels: { app: tyk-postgres }
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: tyk-postgres }
+  template:
+    metadata:
+      labels: { app: tyk-postgres }
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          env:
+            - { name: POSTGRES_USER, value: postgres }
+            - { name: POSTGRES_PASSWORD, value: workshop }
+            - { name: POSTGRES_DB, value: tyk_analytics }
+            - { name: PGDATA, value: /var/lib/postgresql/data/pgdata }
+          ports: [{ name: postgres, containerPort: 5432 }]
+          readinessProbe:
+            exec: { command: ["pg_isready", "-U", "postgres", "-d", "tyk_analytics"] }
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          volumeMounts:
+            - { name: data, mountPath: /var/lib/postgresql/data }
+          resources:
+            requests: { cpu: 100m, memory: 128Mi }
+            limits: { memory: 512Mi }
+      volumes:
+        - name: data
+          emptyDir: {}
