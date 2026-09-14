@@ -392,6 +392,18 @@ Worth saying out loud, because someone will ask. The full list, with the operati
 
 ---
 
+## License
+
+[Apache-2.0](LICENSE). The workshop is meant to be run, forked and adapted — including the
+exercises, the Tyk and Keycloak configuration, and the two Go services.
+
+The credentials in this repository (`Acme-Demo-2026!`, `Workshop-2026!`,
+`acme-demo-exchange-secret`) are fixtures for a local kind cluster and are published
+deliberately so the workshop runs without setup. They are not secrets. A Tyk licence is
+the one thing you must supply yourself, in `.env`, which is gitignored.
+
+---
+
 ## Tear it down
 
 ```bash
