@@ -12,6 +12,8 @@ It all runs locally in one Kubernetes cluster. Setup takes about fifteen minutes
 
 **Presenting this?** [`docs/presenting.md`](docs/presenting.md) is a 30-minute runbook with measured timings and what to say at each beat.
 
+**Want the room to build it rather than watch it?** [agent-authorization-lab](https://github.com/hellobudha/agent-authorization-lab) is the two-hour hands-on version: the same system, in six labs, starting from an agent with no protection at all.
+
 | If you want | Read |
 |---|---|
 | To run it | this file, top to bottom |
