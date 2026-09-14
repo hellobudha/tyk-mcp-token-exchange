@@ -6,6 +6,18 @@ The same refund request will succeed for one user and be refused for another, wi
 
 Everything runs locally in one Kubernetes cluster. Total setup is about fifteen minutes, most of it waiting for images.
 
+**Running this for an audience?** [`docs/presenting.md`](docs/presenting.md) is a 30-minute runbook with timings and what to say at each beat.
+
+| If you want | Read |
+|---|---|
+| To run it | this file, top to bottom |
+| The identity model — clients, scopes, mappers, users | [`docs/keycloak.md`](docs/keycloak.md) |
+| The gateway config — two gates, the exchange, Operator gotchas | [`docs/tyk-config.md`](docs/tyk-config.md) |
+| To change things while it runs | [`live-demo/README.md`](live-demo/README.md) |
+| Traces and the two audit trails | [`docs/observability.md`](docs/observability.md) |
+| What does not work, honestly | [`docs/limitations.md`](docs/limitations.md) |
+| To present it | [`docs/presenting.md`](docs/presenting.md) |
+
 ---
 
 ## What you will build
@@ -140,8 +152,17 @@ kubectl get tykoasapidefinition,tykmcpproxydefinition,securitypolicy -n acme
 ## Step 3 — open the ports
 
 ```bash
-./scripts/03-port-forward.sh     # leave this running in its own terminal
+./scripts/03-port-forward.sh --detach     # survives closing the terminal
 ```
+
+Each forward is supervised and restarted on its own. `kubectl port-forward` exits for good when it loses its pod — a rollout, an eviction, a laptop sleeping — so an unsupervised forward leaves you with a script that is still running and an endpoint that is silently dead.
+
+```bash
+./scripts/03-port-forward.sh --status    # is each endpoint actually up?
+./scripts/03-port-forward.sh --stop      # stop a detached run
+```
+
+Run it without `--detach` to keep the old foreground behaviour, where ctrl-c stops everything.
 
 | | |
 |---|---|
@@ -150,7 +171,7 @@ kubectl get tykoasapidefinition,tykmcpproxydefinition,securitypolicy -n acme
 | Tyk Dashboard | <http://localhost:3000> — `admin@acme.example` / `Workshop-2026!` |
 | Traces | <http://localhost:16686> |
 
-> These die with the terminal. If the copilot suddenly stops responding mid-workshop, this is almost always why.
+> With `--detach` these survive both the terminal closing and a pod restarting. If the copilot suddenly stops responding mid-workshop, run `--status` before assuming anything else is wrong.
 
 ---
 
@@ -259,7 +280,7 @@ The copilot never holds the narrowed token. It is minted inside the gateway, use
 
 ## Change it live
 
-The reason this runs on Kubernetes. Each of these is an edit to a file, then `kubectl apply -k .`.
+The reason this runs on Kubernetes. Each of these is an edit to a file, then `kubectl apply -k .`. Three of six are below; all six, with copy-paste JSON, are in [`live-demo/README.md`](live-demo/README.md) — including **adding a user with a new permission tier**, which is the one that best shows where agent authorization belongs.
 
 ### Tighten a tool — no restart, ~20 seconds
 
@@ -336,7 +357,10 @@ For configuration changes, the Dashboard's **Audit Logs** view records everythin
 ├── k8s/                     Kubernetes manifests and the three Tyk resources
 ├── services/                the copilot and the MCP tool server (Go)
 ├── scripts/                 numbered, run in order
-├── live-demo/               the change-live exercises and audit helpers
+├── live-demo/               the six change-live exercises and audit helpers
+├── docs/                    identity model, gateway config, observability,
+│                              limitations, and the presenter runbook
+├── platform/                redis + postgres for the control plane
 └── kustomization.yaml       kubectl apply -k .
 ```
 
@@ -346,7 +370,7 @@ For configuration changes, the Dashboard's **Audit Logs** view records everythin
 
 | Symptom | Cause | Fix |
 |---|---|---|
-| Copilot or Dashboard unreachable | the port-forward terminal died | `./scripts/03-port-forward.sh` |
+| Copilot or Dashboard unreachable | a forward died, or was never started | `./scripts/03-port-forward.sh --status`, then `--detach` |
 | `403 Access disallowed` on everything | the policy didn't reconcile | check `.status.pol_id` on the SecurityPolicy; `02-deploy.sh` nudges it for you |
 | Every route 404s | the gateway registered before the Dashboard was up | `kubectl rollout restart deploy/gateway-tyk-tyk-gateway -n tyk` |
 | `ImagePullBackOff` on chat or mcp-server | images not on the node | re-run `./scripts/02-deploy.sh` |
@@ -359,8 +383,9 @@ For configuration changes, the Dashboard's **Audit Logs** view records everythin
 
 ## What this does not do
 
-Worth saying out loud, because someone will ask.
+Worth saying out loud, because someone will ask. The full list, with the operational sharp edges, is in [`docs/limitations.md`](docs/limitations.md).
 
+- **The tool list is not filtered per user.** `tools/list` returns all five tools to alice, including `issue_refund`, which she cannot call. Enforcement happens when a tool is *invoked*, not when it is discovered — the catalogue is a description of the API surface, not an authorization decision. Filtering it would be a usability improvement, not a security one: hiding a tool the gateway already refuses adds obscurity, not a control. Worth saying before someone asks.
 - **This is impersonation, not delegation.** The exchanged token keeps the rep's `sub` and records the gateway only as `azp`. RFC 8693 also describes a formal actor chain via an `act` claim — Keycloak's standard token exchange does not mint one, and neither do Okta or Auth0. Ping and Curity do. If a compliance model needs a cryptographic delegation chain, that is a choice of identity provider, not of gateway.
 - **The identity provider is on the critical path.** If Keycloak is down, tool calls fail. That is the honest trade for having no long-lived credentials anywhere.
 - **Exchange-specific telemetry is thin.** The exchange middleware produces a timed span, but no provider, outcome or cache-hit attributes yet.

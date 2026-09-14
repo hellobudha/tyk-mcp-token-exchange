@@ -59,8 +59,8 @@ if who_filter:
     title += " — " + who_filter
 print(title)
 print("=" * len(title))
-print("{:<10}{:<10}{:<18}{:<26}{}".format("when", "user", "tool", "outcome", "trace"))
-print("-" * 94)
+print("{:<10}{:<10}{:<18}{:<30}{}".format("when", "user", "tool", "outcome", "trace"))
+print("-" * 84)
 
 VERDICT = {200: "allowed", 403: "DENIED (insufficient scope)", 401: "DENIED (not authenticated)"}
 for start, user, tool, rc, tid in rows:
@@ -72,7 +72,7 @@ for start, user, tool, rc, tid in rows:
     shown = str(user)
     if len(shown) > 9:
         shown = shown[:8] + "\u2026"       # raw sub UUIDs, from before identityBaseField was set
-    print("{:<10}{:<10}{:<18}{:<26}{}".format(when, shown, tool, verdict, tid[:16]))
+    print("{:<10}{:<10}{:<18}{:<30}{}".format(when, shown, tool, verdict, tid[:16]))
 
 print()
 print("Open a trace:  " + jaeger + "/trace/<trace-id>")
