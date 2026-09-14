@@ -196,21 +196,6 @@
           "exchange": {
             "enabled": true
           }
-        },
-        "customer_notes": {
-          "security": [
-            {
-              "oauth2": [
-                "customers:read"
-              ]
-            }
-          ],
-          "scopeCheck": {
-            "enabled": true
-          },
-          "exchange": {
-            "enabled": true
-          }
         }
       }
     }

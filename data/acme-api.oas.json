@@ -154,35 +154,6 @@
           }
         }
       }
-    },
-    "/anything/customers/{customer_id}/notes": {
-      "get": {
-        "operationId": "customerNotes",
-        "summary": "Recent support notes for a customer",
-        "parameters": [
-          {
-            "name": "customer_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "description": "Acme customer reference, e.g. C-1024"
-          }
-        ],
-        "security": [
-          {
-            "oauth2": [
-              "customers:read"
-            ]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "ok"
-          }
-        }
-      }
     }
   },
   "components": {
@@ -237,11 +208,6 @@
           }
         },
         "issueRefund": {
-          "scopeCheck": {
-            "enabled": true
-          }
-        },
-        "customerNotes": {
           "scopeCheck": {
             "enabled": true
           }
