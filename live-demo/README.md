@@ -246,8 +246,5 @@ Two things to point at:
 
 ---
 
-## Do not demo: drift repair
-
-Deleting an API in the Dashboard and waiting for the Operator to restore it **does not work reliably**. Observed on this stack: an MCP proxy was deleted out of band, the custom resource carried on reporting `Successful` because the Operator's cached spec hash still matched, and it was never recreated. An annotation nudge does not help either — `TykMcpProxyDefinition` ignores metadata-only changes.
 
 Recovery meant deleting and recreating the CR, which then blocked on the `SecurityPolicy` reference. Leave this one out.
