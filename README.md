@@ -1,7 +1,7 @@
-# Managing agent authorization using OAuth Token exchange <br> Boston Kubernetes Meetup Sep 15, 2026
+# Managing agent authorization using OAuth Token exchange
 
 
-## The AI agent that can't exceed its user's permissions
+## Boston K8s Meetup - The AI agent that can't exceed its user's permissions
 
 A support rep asks an AI copilot to pull up a customer record. The copilot calls your API. Somewhere in that single hop, a question gets answered that most teams have never sat down and decided: whose permissions did that call run with?
 
