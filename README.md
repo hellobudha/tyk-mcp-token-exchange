@@ -13,7 +13,9 @@ You'll stand up a support copilot that calls APIs on behalf of a signed-in perso
 
 It all runs locally in one Kubernetes cluster. Setup takes about fifteen minutes, most of it waiting for images to pull.
 
-**Presenting this?** [`docs/presenting.md`](docs/presenting.md) is a 30-minute runbook with measured timings and what to say at each beat.
+**Watching me demo this, or doing it yourself?** [`docs/walkthrough.md`](docs/walkthrough.md) is the whole 30-minute walkthrough: every concept, every command, in order.
+
+**Presenting it yourself?** [`docs/presenting.md`](docs/presenting.md) is my own runbook, with timings and the beats I hit.
 
 **Want the room to build it rather than watch it?** [agent-authorization-lab](https://github.com/hellobudha/agent-authorization-lab) is the two-hour hands-on version: the same system, in six labs, starting from an agent with no protection at all.
 
@@ -25,7 +27,8 @@ It all runs locally in one Kubernetes cluster. Setup takes about fifteen minutes
 | To change things while it runs | [`live-demo/README.md`](live-demo/README.md) |
 | Traces and the two audit trails | [`docs/observability.md`](docs/observability.md) |
 | What doesn't work, honestly | [`docs/limitations.md`](docs/limitations.md) |
-| To present it | [`docs/presenting.md`](docs/presenting.md) |
+| To follow along, or work through it yourself | [`docs/walkthrough.md`](docs/walkthrough.md) |
+| To present it to a room (my own notes) | [`docs/presenting.md`](docs/presenting.md) |
 
 ---
 

@@ -1,5 +1,7 @@
 # Presenting this — a 30-minute runbook
 
+> **This one is for whoever is at the front of the room.** It carries timings, the lines I actually say, and the things that go wrong. If you're following along with the demo or working through it on your own, you want [walkthrough.md](walkthrough.md) instead — same material, written for you rather than for the presenter.
+
 Six segments to thirty minutes. Everything here has been run; the timings are real.
 
 | | | |
