@@ -245,6 +245,3 @@ Two things to point at:
 - **The actor is the Operator's Dashboard user**, not the engineer. So: **Tyk's audit log says what changed and when; git says who asked and why.** Neither is sufficient alone, and together they answer the question the workshop opened with.
 
 ---
-
-
-Recovery meant deleting and recreating the CR, which then blocked on the `SecurityPolicy` reference. Leave this one out.
